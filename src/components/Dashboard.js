@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import { collection, onSnapshot } from 'firebase/firestore';
 // import db from '../services/firebase'; // Import the initialized db instance
 import ProductForm from './ProductForm'; 
-
+// import BCSComponent from './BarCodeScanner';
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [isProductSubmitted, setIsProductSubmitted] = useState(false);
@@ -25,7 +25,7 @@ const Dashboard = () => {
       // Re-fetch data after submission
       const fetchData = async () => {
         try {
-          const response = await fetch('http://localhost:3001/api/products');
+          const response = await fetch('https://s4-api.onrender.com/api/products');
           const data = await response.json();
            // Extract the product object from the data
           const productData = Object.values(data)[0]; 
@@ -47,7 +47,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/products');
+        const response = await fetch('https://s4-api.onrender.com/api/products');
         const data = await response.json();
          // Extract the product object from the data
         const productData = Object.values(data)[0]; 
@@ -84,7 +84,6 @@ const Dashboard = () => {
         Add Product
       </button>
       {isFormVisible && <ProductForm onProductSubmit={handleProductSubmit} onCancel={handleCancel} />}
-
       {isSaveSuccess && (
         <div className="text-green-500 mt-2">
           Saving successful!

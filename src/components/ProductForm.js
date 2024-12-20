@@ -1,34 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+// import QRCodeScanner from './BarCodeScanner'; // Assuming QrCodeScanner is in the same directory
 
-const ProductForm = ({onProductSubmit, onCancel}) => {
+const ProductForm = ({ onProductSubmit, onCancel, videoRef  }) => {
   const [name, setName] = useState('');
   const [codeName, setCodeName] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
 
+
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     try {
       const data = {
         // id: 1, // You might want to handle ID generation on the server
-        code_name: e.target.codeName.value, 
-        name: e.target.name.value, 
-        price: parseFloat(e.target.price.value) // Convert price to a number
+        code_name: codeName, 
+        name: name,
+        price: price, 
       };
-  
-      const response = await axios.post('http://localhost:3001/api/products', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
+
+      const response = await axios.post(
+        'https://s4-api.onrender.com/api/products',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       // Handle success (e.g., clear form, display success message)
-      e.target.codeName.value = '';
-      e.target.name.value = '';
-      e.target.price.value = ''; 
+      setCodeName(''); 
+      setName('');
+      setPrice(''); 
       onProductSubmit(); // Call the prop to notify Dashboard
-      console.log("It should succeed");
+      console.log('It should succeed' + response);
     } catch (error) {
       console.error('Error creating product:', error);
     }
@@ -42,61 +48,74 @@ const ProductForm = ({onProductSubmit, onCancel}) => {
     <div className="bg-gray-100 p-6 rounded-lg shadow-md">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
             Name:
           </label>
-          <input 
-            type="text" 
-            id="name" 
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full" 
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
           />
         </div>
         <div>
-          <label htmlFor="codeName" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="codeName"
+            className="block text-sm font-medium text-gray-700"
+          >
             Code Name:
           </label>
-          <input 
-            type="text" 
-            id="codeName" 
+          <input
+            type="text"
+            id="codeName"
             value={codeName} 
-            onChange={(e) => setCodeName(e.target.value)} 
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full" 
+            readOnly // Make the input field read-only after scanning
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
           />
         </div>
         <div>
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="price"
+            className="block text-sm font-medium text-gray-700"
+          >
             Price:
           </label>
-          <input 
-            type="number" 
-            id="price" 
-            value={price} 
-            onChange={(e) => setPrice(e.target.value)} 
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full" 
+          <input
+            type="number"
+            id="price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
           />
         </div>
         <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="image"
+            className="block text-sm font-medium text-gray-700"
+          >
             Image:
           </label>
-          <input 
-            type="file" 
-            id="image" 
-            accept="image/*" 
-            onChange={handleImageChange} 
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full" 
+          <input
+            type="file"
+            id="image"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
           />
         </div>
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Save
         </button>
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={onCancel}
         >

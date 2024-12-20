@@ -1,0 +1,21 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches: [ "main" ] # Deploy on pushes to the "main" branch
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3 
+      - uses: actions/setup-node@v3 
+        with:
+          node-version: '22' # Use the Node.js version you are using
+      - run: npm install 
+      - run: npm run build 
+      - uses: FirebaseExtended/action-hosting-deploy@v0 
+        with:
+          args: deploy 
+          projectId: ssss-a16e6 
+          token: ${{ secrets.FIREBASE_TOKEN }}
