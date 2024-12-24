@@ -7,7 +7,7 @@ const BarcodeScannerC = () => {
   return (
     <>
       <BarcodeScanner
-        onSuccess={(text) => setData(text)}
+        onSuccess={(text) => {setData(text); console.log("Scamned")}}
         onError={(error) => {
           if (error) {
             console.error(error.message);

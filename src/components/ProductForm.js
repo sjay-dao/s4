@@ -73,7 +73,8 @@ const ProductForm = ({ onProductSubmit, onCancel, videoRef  }) => {
             type="text"
             id="codeName"
             value={codeName} 
-            readOnly // Make the input field read-only after scanning
+            onChange={(e) => setCodeName(e.target.value)}
+            // readOnly // Make the input field read-only after scanning
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
           />
         </div>
