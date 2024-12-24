@@ -1,42 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 // import QRCodeScanner from './BarCodeScanner'; // Assuming QrCodeScanner is in the same directory
 
-const ProductForm = ({ onProductSubmit, onCancel, videoRef  }) => {
-  const [name, setName] = useState('');
-  const [codeName, setCodeName] = useState('');
-  const [price, setPrice] = useState('');
+const ProductForm = ({ productData, onProductEdit,onProductSubmit, onCancel, videoRef  }) => {
+  const [name, setName] = useState(productData?.name || ''); // Pre-fill name
+  const [codeName, setCodeName] = useState(productData?.code_name || ''); // Pre-fill code name
+  const [price, setPrice] = useState(productData?.price || ''); // Pre-fill price
   const [image, setImage] = useState(null);
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const data = {
-        // id: 1, // You might want to handle ID generation on the server
-        code_name: codeName, 
+        code_name: codeName,
         name: name,
-        price: price, 
+        price: price,
       };
-
-      const response = await axios.post(
-        'https://s4-api.onrender.com/api/products',
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+     
+    const url_suffix = productData ? "/" + productData.uid : ""; 
+    const url = 
+              // `http://localhost:3001/api/products${url_suffix}` // for localhost
+              `https://s4-api.onrender.com/api/products${url_suffix}`; 
+    const headers_ = {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+    const method = productData ? 'PUT' : 'POST'; // Use PUT for editing, POST for creating
+    const affix = (method === 'PUT')?'edited':'saved';
+      console.log(url);
+      const response = await (method === 'PUT'? axios.put(url, data, headers_) : axios.post(url, data, headers_)
       );
-
+      
+      console.log('Product '+ affix  + ' successfully:'+ response);
       // Handle success (e.g., clear form, display success message)
-      setCodeName(''); 
+      setCodeName('');
       setName('');
-      setPrice(''); 
-      onProductSubmit(); // Call the prop to notify Dashboard
-      console.log('It should succeed' + response);
+      setPrice('');
+      onProductEdit(); // Call the prop to notify Dashboard
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error editing product:', error);
     }
   };
 

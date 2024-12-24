@@ -7,10 +7,12 @@ const Dashboard = () => {
   const [isProductSubmitted, setIsProductSubmitted] = useState(true);
   const [isFormVisible, setIsFormVisible] = useState(false); 
   const [isSaveSuccess, setIsSaveSuccess] = useState(false);
+  const [isEditingSuccess, setIsEditingSuccess] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedProductId, setSelectedProductId] = useState(null); 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
-
+  const [editingProductId, setEditingProductId] = useState(null); 
+  
   const handleProductSubmit = () => {
     try {
       setIsProductSubmitted(true); 
@@ -23,10 +25,24 @@ const Dashboard = () => {
     }
   };
 
+
+  const handleProductEdit = () => {
+    try {
+      setEditingProductId(null); 
+      setIsEditingSuccess(true);
+      setTimeout(() => {
+        setIsEditingSuccess(false);
+      }, 3000); 
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     const fetchData = async (searchQuery) => {
       try {
-        const response = await fetch('http://localhost:3001/api/products');
+        const response = await fetch(
+          // 'http://localhost:3001/api/products' // for localhost
+           `https://s4-api.onrender.com/api/products`);
         const data = await response.json();
 
         // Modify data to add uid 
@@ -47,7 +63,7 @@ const Dashboard = () => {
       }
     };
     fetchData(query);
-  }, [isProductSubmitted, query]);
+  }, [isProductSubmitted, query, isEditingSuccess]);
 
   const toggleForm = () => {
     setIsFormVisible(!isFormVisible);
@@ -55,6 +71,7 @@ const Dashboard = () => {
 
   const handleCancel = () => {
     setIsFormVisible(false);
+    setEditingProductId(null);
   };
 
   const handleSearch = (event) => {
@@ -70,7 +87,9 @@ const Dashboard = () => {
   const confirmDeleteProduct = async () => {
     if (selectedProductId) {
       try {
-        const response = await fetch(`http://localhost:3001/api/products/${selectedProductId}`, {
+        const response = await fetch(
+          // `http://localhost:3001/api/products/${selectedProductId}` // for localhost
+          `https://s4-api.onrender.com/api/products/${selectedProductId}`, {
           method: 'DELETE',
         });
         console.log(response);
@@ -110,21 +129,32 @@ const Dashboard = () => {
       >
         Add Product
       </button>
-      {isFormVisible && <ProductForm onProductSubmit={handleProductSubmit} onCancel={handleCancel} />}
+      {(isFormVisible || editingProductId ) && <ProductForm 
+          productData={products.find((product) => product.uid === editingProductId)} 
+          onProductEdit={handleProductEdit} 
+          onProductSubmit={handleProductSubmit} 
+          onCancel={handleCancel} />}
       {isSaveSuccess && (
         <div className="text-green-500 mt-2">
           Saving successful!
         </div>
       )}
+      {isEditingSuccess && (
+        <div className="text-green-500 mt-2">
+          Editing successful!
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {/* {Object.entries(products[1])} */}
         {Object.entries(products).map(([key, product]) => (
           <div key={key} className="bg-white rounded-lg shadow-md p-6">
-            <label>{key}</label>
             <h2 className="text-lg font-semibold mb-2">Name: {product.name}</h2>
             <p className="text-gray-600">Code Name: {product.code_name}</p>
             <p className="text-gray-600">Price: ₱{product.price}</p>
+            <button 
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" 
+              onClick={() => setEditingProductId(product.uid)} 
+            >Edit</button>
             <button
               className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => handleDeleteProduct(product.uid)} 
