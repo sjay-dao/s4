@@ -41,8 +41,9 @@ const Dashboard = () => {
     const fetchData = async (searchQuery) => {
       try {
         const response = await fetch(
-          // 'http://localhost:3001/api/products' // for localhost
-           `https://s4-api.onrender.com/api/products`);
+          'http://localhost:3001/api/products' // for localhost
+          //  `https://s4-api.onrender.com/api/products`
+          );
         const data = await response.json();
 
         // Modify data to add uid 
@@ -88,10 +89,10 @@ const Dashboard = () => {
     if (selectedProductId) {
       try {
         const response = await fetch(
-          // `http://localhost:3001/api/products/${selectedProductId}` // for localhost
-          `https://s4-api.onrender.com/api/products/${selectedProductId}`, {
-          method: 'DELETE',
-        });
+          `http://localhost:3001/api/products/${selectedProductId}` // for localhost
+          // `https://s4-api.onrender.com/api/products/${selectedProductId}`
+          , {method: 'DELETE',}
+        );
         console.log(response);
         if (response.ok) {
           // Update the local state

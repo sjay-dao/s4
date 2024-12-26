@@ -19,8 +19,9 @@ const ProductForm = ({ productData, onProductEdit,onProductSubmit, onCancel, vid
      
     const url_suffix = productData ? "/" + productData.uid : ""; 
     const url = 
-              // `http://localhost:3001/api/products${url_suffix}` // for localhost
-              `https://s4-api.onrender.com/api/products${url_suffix}`; 
+              `http://localhost:3001/api/products${url_suffix}` // for localhost
+              // `https://s4-api.onrender.com/api/products${url_suffix}`
+              ; 
     const headers_ = {
       headers: {
         'Content-Type': 'application/json',
