@@ -4,7 +4,11 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontSize: {
+        'custom-size': '10px', // Define your desired font size
+      }
+    }
   },
   plugins: [],
 }
